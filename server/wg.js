@@ -133,8 +133,8 @@ let wired = {
                     let configFile = fs.readFileSync(__dirname + '/../conf/wired.yml', 'utf8');
                     wired.yaml = yaml.load(configFile);
                     wired.vpnport = wired.yaml.server.port;
-                    wired.wired = wired.yaml.server.wired;
-                    wired.network = wired.yaml.server.network;
+                    wired.interface = wired.yaml.server.interface;
+                    wired.network = wired.yaml.server.ip;
                 } catch (e) { }
             }
         }
