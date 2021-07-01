@@ -289,6 +289,7 @@ try {
         })[path.extname(fp)];
         fp = __dirname + '/../web/' + fp;
         fs.readFile(fp, (e, c) => {
+            if(e) console.log(e); // для docker logs
             res.writeHead((e || !isAdmin) ? 404 : 200, {'Content-Type': (e || !isAdmin) ? 'text/plain' : contentType});
             res.end((e || !isAdmin) ? 'error' : c, 'utf-8');
         });
