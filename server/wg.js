@@ -142,7 +142,10 @@ let wired = {
         yaml() {
             if(wired.yaml.hasOwnProperty('peers') && !Array.isArray(wired.yaml.peers)) wired.yaml.peers = [];
             let yamlStr = yaml.dump(wired.yaml);
-            fs.writeFileSync(wired.workdir + '../conf/wired.yml', yamlStr, 'utf8');
+            fs.writeFileSync(wired.workdir + '../conf/wired.yml', yamlStr, {
+                encoding: 'utf8',
+                flags: 'w',
+            });
         },
         conf() {
             let confStr = '';
@@ -157,7 +160,10 @@ let wired = {
                 confStr += 'PersistentKeepalive = 25\n';
                 confStr += '\n';
             });
-            fs.writeFileSync(wired.workdir + '../conf/wired.conf', confStr, 'utf8');
+            fs.writeFileSync(wired.workdir + '../conf/wired.conf', confStr, {
+                encoding: 'utf8',
+                flags: 'w',
+            });
         },
         interface() {
             let cmd = spawnSync('wg', ['syncconf', wired.interface, 'wired.conf'], {cwd: wired.workdir + '../conf'});

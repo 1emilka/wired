@@ -17,11 +17,11 @@ ENV WIRED_WEBPORT="${WIRED_WEBPORT}"
 
 WORKDIR /root
 RUN apk update && apk upgrade \
-    && apk add -U git wireguard-tools nodejs
+    && apk add -U git wireguard-tools nodejs npm
 RUN git clone https://github.com/1emilka/wired && mkdir /root/wired/conf
 WORKDIR /root/wired/server
 VOLUME /root/wired/conf
-RUN npm i
+RUN npm i -g nodemon && npm i
 EXPOSE $WIRED_VPNPORT
 EXPOSE $WIRED_WEBPORT
 CMD npm run start
