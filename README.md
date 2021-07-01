@@ -2,7 +2,7 @@
 Веб-интерфейс для управления Wireguard
 ## Установка
 ```shell
-make wired && cd wired
+mkdir wired && cd wired
 wget https://github.com/1emilka/wired/raw/master/docker/wired.Dockerfile
 docker run -d -p 50443:443 -p 50080:80 $(docker build -q -f wired.Dockerfile .)
 ```
