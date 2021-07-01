@@ -129,7 +129,7 @@ let wired = {
         yaml() {
             if(wired.yaml === null) {
                 try {
-                    let configFile = fs.readFileSync(__dirname + '../conf/wired.yml', 'utf8');
+                    let configFile = fs.readFileSync(__dirname + '/../conf/wired.yml', 'utf8');
                     wired.yaml = yaml.load(configFile);
                     wired.port = wired.yaml.server.port;
                     wired.wired = wired.yaml.server.wired;
@@ -142,7 +142,7 @@ let wired = {
         yaml() {
             if(wired.yaml.hasOwnProperty('peers') && !Array.isArray(wired.yaml.peers)) wired.yaml.peers = [];
             let yamlStr = yaml.dump(wired.yaml);
-            fs.writeFileSync(__dirname + '../conf/wired.yml', yamlStr, {
+            fs.writeFileSync(__dirname + '/../conf/wired.yml', yamlStr, {
                 encoding: 'utf8',
                 flags: 'w',
             });
@@ -160,13 +160,13 @@ let wired = {
                 confStr += 'PersistentKeepalive = 25\n';
                 confStr += '\n';
             });
-            fs.writeFileSync(__dirname + '../conf/wired.conf', confStr, {
+            fs.writeFileSync(__dirname + '/../conf/wired.conf', confStr, {
                 encoding: 'utf8',
                 flags: 'w',
             });
         },
         interface() {
-            let cmd = spawnSync('wg', ['syncconf', wired.interface, 'wired.conf'], {cwd: __dirname + '../conf'});
+            let cmd = spawnSync('wg', ['syncconf', wired.interface, 'wired.conf'], {cwd: __dirname + '/../conf'});
             return cmd.status === 0;
         }
     },
@@ -182,8 +182,7 @@ let wired = {
     // Первый запуск
     checkHealthy() {
         // yaml-конфиг
-        if(!fs.existsSync(__dirname + '../conf/wired.yml')) {
-            spawnSync('touch', [__dirname + '../conf/wired.yml']);
+        if(!fs.existsSync(__dirname + '/../conf/wired.yml')) {
             wired.yaml = {
                 server: {
                     ip: wired.network,
@@ -207,8 +206,7 @@ let wired = {
             wired.reload.yaml();
         }
         // conf-конфиг
-        if(!fs.existsSync(__dirname + '../conf/wired.conf')) {
-            spawnSync('touch', [__dirname + '../conf/wired.conf']);
+        if(!fs.existsSync(__dirname + '/../conf/wired.conf')) {
             wired.update.conf();
         }
         // Интерфейс
@@ -218,7 +216,7 @@ let wired = {
                 throw Error('create interface');
             if(spawnSync('ip', ['addr', 'add', 'dev', wired.interface, wired.network]).status !== 0)
                 throw Error('add subnet to interface');
-            if(spawnSync('wg', ['setconf', wired.interface, 'wired.conf'], {cwd: __dirname + '../conf'}).status !== 0)
+            if(spawnSync('wg', ['setconf', wired.interface, 'wired.conf'], {cwd: __dirname + '/../conf'}).status !== 0)
                 throw Error('set config to interface');
             if(spawnSync('ip', ['link', 'set', 'up', 'dev', wired.interface]).status !== 0)
                 throw Error('up new interface');
