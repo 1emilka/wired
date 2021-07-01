@@ -156,7 +156,7 @@ let wired = {
             confStr += '\n';
             wired.yaml.peers.forEach(peer => {
                 confStr += "[Peer]\n";
-                confStr += `PublicKey = ${peer.keys.private}\n`;
+                confStr += `PublicKey = ${peer.keys.public}\n`;
                 confStr += `AllowedIPs = ${peer.ip}/32\n`;
                 confStr += 'PersistentKeepalive = 25\n';
                 confStr += '\n';
