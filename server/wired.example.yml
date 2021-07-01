@@ -1,0 +1,32 @@
+server:
+  ip: 10.100.0.0/24
+  interface: wired
+  port: 443
+  keys:
+    public: QCuAeB9LIjYaJHkj75gi62t1n0lS7pXq8ty/SXqMjB0=
+    private: uMv+zPAYbRAIUtJknnX6uYk8ovsNK/mGoY06VkNwDnA=
+peers:
+  -
+    name: Эмиль Рабочий
+    keys:
+      public: U2xutA+lC826TP+GAfw+5TF5bwwxtj9bky5wMblKoj8=
+      private: yKY7bGNNo6PqNheMn/KLz2pagReqOPpLYx8oI8CfeVA=
+    ip: 10.100.0.2
+  -
+    name: Эмиль Телефон
+    keys:
+      public: 48tsthq8QTnKxgtKm64iQtgcpPwt7KSUwGhe+y+1+FU=
+      private: 2J/PXK9SHkeswFNEV9dwIE/q5taVZzBsf+2fHVTYRE8=
+    ip: 10.100.0.3
+  -
+    name: Вульфин А. М.
+    keys:
+      public: V9kekhjFRnrd7zdfYpk6G6uXJyKB13biSKzmbOkdp1Y=
+      private: gA0eEPwiGc0SpOeAMRzN+WZt0s9ps/yRufT9Y0eyyXg=
+    ip: 10.100.0.4
+  -
+    name: Эмиль Ноут
+    keys:
+      public: H8CmkJn537oH1TZaz6ZQjLRzJp+TV+yk8jZ1qXMlIkg=
+      private: UNC5HRk6q1kCNPapJBiZPzexZhJfUqVC/7SDWYGPYGw=
+    ip: 10.100.0.5

@@ -1,0 +1,19 @@
+{
+  "name": "wgsrv",
+  "version": "0.0.1",
+  "description": "",
+  "main": "wg.js",
+  "scripts": {
+    "start": "nodemon --exitcrash wg.js",
+    "stop": "forever stop wg.js",
+    "forever": "forever start -c \"nodemon --exitcrash\" wg.js"
+  },
+  "author": "Emil R Khayrullin",
+  "license": "MIT",
+  "dependencies": {
+    "collect.js": "^4.28.6",
+    "fs": "^0.0.1-security",
+    "js-yaml": "^4.1.0",
+    "ws": "^7.5.0"
+  }
+}
