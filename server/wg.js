@@ -287,8 +287,9 @@ try {
             '.js': 'text/javascript',
             '.css': 'text/css',
         })[path.extname(fp)];
+        fp = __dirname + '../web/' + fp;
         fs.readFile(fp, (e, c) => {
-            res.writeHead((e || !isAdmin) ? 500 : 200, {'Content-Type': (e || !isAdmin) ? 'text/plain' : contentType});
+            res.writeHead((e || !isAdmin) ? 404 : 200, {'Content-Type': (e || !isAdmin) ? 'text/plain' : contentType});
             res.end((e || !isAdmin) ? 'error' : c, 'utf-8');
         });
     }).listen(wired.webport, '0.0.0.0');
