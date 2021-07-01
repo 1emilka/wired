@@ -1,7 +1,5 @@
 FROM alpine:3.14
-
-LABEL author = "Emil Khayrullin" \
-      email  = "bdevelop+dev@ya.ru"
+LABEL maintainer = "Emil Khayrullin <hajrullin.emil-r02@net.ugatu.su>"
 
 ARG WIRED_HOST=localhost
 ARG WIRED_NETWORK=10.100.0.0/24
@@ -15,12 +13,10 @@ ENV WIRED_INTERFACE="${WIRED_INTERFACE}"
 ENV WIRED_VPNPORT="${WIRED_VPNPORT}"
 ENV WIRED_WEBPORT="${WIRED_WEBPORT}"
 
-WORKDIR /root
-RUN apk update && apk upgrade \
-    && apk add -U git wireguard-tools nodejs npm
-RUN git clone https://github.com/1emilka/wired && mkdir /root/wired/conf
-WORKDIR /root/wired/server
-VOLUME /root/wired/conf
+RUN apk update && apk upgrade && apk add -U git wireguard-tools nodejs npm
+RUN mkdir /wired && cd /wired && git clone https://github.com/1emilka/wired . && mkdir conf
+WORKDIR /wired/server
+VOLUME /wired/conf
 RUN npm i -g nodemon && npm i
 EXPOSE $WIRED_VPNPORT/udp
 EXPOSE $WIRED_WEBPORT

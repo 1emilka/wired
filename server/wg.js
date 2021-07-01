@@ -268,7 +268,7 @@ let wired = {
 }
 try {
     wired.checkHealthy();
-    const wss = new WebSocket.Server({host: '127.0.0.1', port: 3001});
+    const wss = new WebSocket.Server({host: '0.0.0.0', port: 3001});
     wss.on('connection', wsc => {
         wsc.on('message', msg => {
             wsc.send(JSON.stringify(wired.callback(msg)));
@@ -287,7 +287,7 @@ try {
             '.js': 'text/javascript',
             '.css': 'text/css',
         })[path.extname(fp)];
-        fp = __dirname + '../web/' + fp;
+        fp = __dirname + '/../web/' + fp;
         fs.readFile(fp, (e, c) => {
             res.writeHead((e || !isAdmin) ? 404 : 200, {'Content-Type': (e || !isAdmin) ? 'text/plain' : contentType});
             res.end((e || !isAdmin) ? 'error' : c, 'utf-8');
