@@ -22,6 +22,6 @@ RUN git clone https://github.com/1emilka/wired && mkdir /root/wired/conf
 WORKDIR /root/wired/server
 VOLUME /root/wired/conf
 RUN npm i -g nodemon && npm i
-EXPOSE $WIRED_VPNPORT
+EXPOSE $WIRED_VPNPORT/udp
 EXPOSE $WIRED_WEBPORT
 CMD npm run start

@@ -12,7 +12,8 @@ let wired = {
     host: process.env.WIRED_HOST || 'localhost', // Внешний хост (IP) для подключения
     network: process.env.WIRED_NETWORK || '10.100.0.0/24', // Подсеть
     interface: process.env.WIRED_INTERFACE || 'wired', // Интерфейс
-    port: process.env.WIRED_PORT || 50443, // Порт
+    vpnport: process.env.WIRED_VPNPORT || 443, // Порт для VPN
+    webport: process.env.WIRED_WEBPORT || 80, // Веб-порт
     workdir: __dirname, // Рабочая папка
     callback(msg) { // Обработчик запросов от UI
         let jsr = {ok: false};
@@ -48,7 +49,7 @@ let wired = {
                         jsr.ok = true;
                         jsr.server = {
                             publicKey: wired.yaml.server.keys.public,
-                            endpoint: wired.host + ':' + wired.port,
+                            endpoint: wired.host + ':' + wired.vpnport,
                             network: wired.network,
                             possibleIPs: wired.calculateIPs(),
                         };
@@ -131,7 +132,7 @@ let wired = {
                 try {
                     let configFile = fs.readFileSync(__dirname + '/../conf/wired.yml', 'utf8');
                     wired.yaml = yaml.load(configFile);
-                    wired.port = wired.yaml.server.port;
+                    wired.vpnport = wired.yaml.server.port;
                     wired.wired = wired.yaml.server.wired;
                     wired.network = wired.yaml.server.network;
                 } catch (e) { }
@@ -150,7 +151,7 @@ let wired = {
         conf() {
             let confStr = '';
             confStr += "[Interface]\n";
-            confStr += `ListenPort = ${wired.port}\n`;
+            confStr += `ListenPort = ${wired.yaml.server.port}\n`;
             confStr += `PrivateKey = ${wired.yaml.server.keys.private}\n`;
             confStr += '\n';
             wired.yaml.peers.forEach(peer => {
@@ -187,7 +188,7 @@ let wired = {
                 server: {
                     ip: wired.network,
                     interface: wired.interface,
-                    port: wired.port,
+                    port: wired.vpnport,
                     keys: {
                         private: '',
                         public: '',
@@ -197,6 +198,8 @@ let wired = {
             };
             let serverPrivate = wired.genkey(), serverPublic = wired.pubkey(serverPrivate);
             if((serverPrivate + serverPublic).length === 88) {
+                wired.yaml.server.keys.private = serverPrivate;
+                wired.yaml.server.keys.public = serverPublic;
                 wired.update.yaml();
                 wired.update.conf();
             } else {
@@ -288,7 +291,7 @@ try {
             res.writeHead((e || !isAdmin) ? 500 : 200, {'Content-Type': (e || !isAdmin) ? 'text/plain' : contentType});
             res.end((e || !isAdmin) ? 'error' : c, 'utf-8');
         });
-    }).listen(80, '0.0.0.0');
+    }).listen(wired.webport, '0.0.0.0');
 } catch (e) {
     console.log('wired error');
     console.error(e);

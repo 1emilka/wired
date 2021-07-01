@@ -4,9 +4,9 @@
 ```shell
 mkdir wired && cd wired
 wget https://github.com/1emilka/wired/raw/master/docker/wired.Dockerfile
-docker run -d -p 50443:443 -p 50080:80 $(docker build -q -f wired.Dockerfile .)
+docker run --cap-add=NET_ADMIN -d -p 50443:443 -p 50080:80 $(docker build -q -f wired.Dockerfile .)
 ```
-## Возможные аргументы
+## Возможные аргументы контейнера
 Наименование | Описание | По умолчанию
 --- | --- | ---
 WIRED_HOST | Хост для подключения к VPN (работает в паре с WIRED_PORT) | localhost
