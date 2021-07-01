@@ -6,7 +6,7 @@ mkdir wired && cd wired
 wget https://github.com/1emilka/wired/raw/master/docker/wired.Dockerfile
 docker run -d --cap-add=NET_ADMIN \
       -e WIRED_HOST=<ВАШЕ_ИМЯ_ХОСТА> \
-      -p 443:443 -p 80:80 -p 3001:3001 $(docker build -q -f wired.Dockerfile .)
+      -p 443:443/udp -p 80:80 -p 3001:3001 $(docker build -q -f wired.Dockerfile .)
 ```
 ## Возможные аргументы контейнера
 Наименование | Описание | По умолчанию

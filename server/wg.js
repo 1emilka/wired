@@ -257,7 +257,7 @@ let wired = {
             } else throw Error('invalid subnet in network')
         } else throw Error('calculate network');
         let currentIps = [];
-        wired.yaml.peers.each(peer => {
+        wired.yaml.peers.forEach(peer => {
             currentIps.push(peer.ip);
         })
         ips.filter(ip => {
