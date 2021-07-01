@@ -20,4 +20,5 @@ VOLUME /wired/conf
 RUN npm i -g nodemon && npm i
 EXPOSE $WIRED_VPNPORT/udp
 EXPOSE $WIRED_WEBPORT
+EXPOSE 3001
 CMD npm run start
