@@ -236,11 +236,12 @@ let wired = {
     calculateGatewayIP(withMask) {
         let networkArray = wired.network.split('/');
         let ip = false;
+        let netMask = '';
         if(networkArray.length === 2) {
             let temp = new Uint32Array(2); temp[0] = temp[1] = 0;
             let rawIp = new Uint8Array(4);
             let subnet = networkArray[0].split('.');
-            let netMask = +networkArray[1];
+            netMask = +networkArray[1];
             if(subnet.length === 4) {
                 // Считаем IP подсети как 32-битное число
                 subnet.forEach((subnetPart, i) => {

@@ -7,12 +7,17 @@ services:
     container_name: wired
     cap_add:
       - NET_ADMIN
+      - SYS_MODULE
     environment:
       - WIRED_HOST=<ВАШЕ_ИМЯ_ХОСТА>
     volumes:
-      - ./conf:/wired/conf
+      - wired_conf:/wired/conf
     ports:
       - 443:443/udp
       - 80:80
       - 3001:3001
+    sysctls:
+      - net.ipv4.ip_forward=1
     restart: unless-stopped
+volumes:
+  wired_conf:
