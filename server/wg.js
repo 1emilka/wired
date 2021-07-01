@@ -209,16 +209,14 @@ let wired = {
             wired.reload.yaml();
         }
         // conf-конфиг
-        if(!fs.existsSync(__dirname + '/../conf/wired.conf')) {
-            wired.update.conf();
-        }
+        wired.update.conf();
         // Интерфейс
         let checkCmd = spawnSync('ip', ['link', 'show', wired.interface]);
         if(checkCmd.status !== 0) {
             if(spawnSync('ip', ['link', 'add', 'dev', wired.interface, 'type', 'wireguard']).status !== 0)
                 throw Error('create interface');
-            if(spawnSync('ip', ['addr', 'add', 'dev', wired.interface, wired.network]).status !== 0)
-                throw Error('add subnet to interface');
+            if(spawnSync('ip', ['addr', 'add', 'dev', wired.interface, wired.calculateGatewayIP(true)]).status !== 0)
+                throw Error('add addr to interface');
             if(spawnSync('wg', ['setconf', wired.interface, 'wired.conf'], {cwd: __dirname + '/../conf'}).status !== 0)
                 throw Error('set config to interface');
             if(spawnSync('ip', ['link', 'set', 'up', 'dev', wired.interface]).status !== 0)
@@ -230,9 +228,33 @@ let wired = {
                     throw Error('up old interface');
                 wired.update.interface();
             }
+            if(spawnSync('wg', ['setconf', wired.interface, 'wired.conf'], {cwd: __dirname + '/../conf'}).status !== 0)
+                throw Error('set config to interface');
         }
     },
     // IP
+    calculateGatewayIP(withMask) {
+        let networkArray = wired.network.split('/');
+        let ip = false;
+        if(networkArray.length === 2) {
+            let temp = new Uint32Array(2); temp[0] = temp[1] = 0;
+            let rawIp = new Uint8Array(4);
+            let subnet = networkArray[0].split('.');
+            let netMask = +networkArray[1];
+            if(subnet.length === 4) {
+                // Считаем IP подсети как 32-битное число
+                subnet.forEach((subnetPart, i) => {
+                    temp[0] += subnetPart << (8 * (3 - i));
+                });
+                temp[1] = ~((2 ** (32 - netMask)) - 1);
+                temp[0] = temp[1] & temp[0];
+                temp[0] += 1;
+                for(let i = 0; i < 4; i++) rawIp[i] = temp[0] >> (8 * (3 - i));
+                ip = rawIp.join('.');
+            } else throw Error('invalid subnet in network')
+        } else throw Error('calculate network');
+        return ip + (withMask ? netMask : '');
+    },
     calculateIPs() {
         let networkArray = wired.network.split('/');
         let ips = [];
