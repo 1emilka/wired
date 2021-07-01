@@ -1,12 +1,19 @@
 # Wired
 Веб-интерфейс для управления Wireguard
 ## Установка
+### docker run
 ```shell
-mkdir wired && cd wired
 wget https://github.com/1emilka/wired/raw/master/docker/wired.Dockerfile
 docker run -d --cap-add=NET_ADMIN \
       -e WIRED_HOST=<ВАШЕ_ИМЯ_ХОСТА> \
       -p 443:443/udp -p 80:80 -p 3001:3001 $(docker build -q -f wired.Dockerfile .)
+```
+### docker-compose
+```shell
+wget https://github.com/1emilka/wired/raw/master/docker/docker-compose.yml
+wget https://github.com/1emilka/wired/raw/master/docker/wired.Dockerfile
+# Не забудьте изменить WIRED_HOST на имя своего хоста в docker-compose.yml
+docker-compose up -d
 ```
 ## Возможные аргументы контейнера
 Наименование | Описание | По умолчанию

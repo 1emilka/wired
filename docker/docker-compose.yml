@@ -1,0 +1,18 @@
+version: "3.0"
+services:
+  wired:
+    build:
+      context: .
+      dockerfile: wired.Dockerfile
+    container_name: wired
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - WIRED_HOST=<ВАШЕ_ИМЯ_ХОСТА>
+    volumes:
+      - ./conf:/wired/conf
+    ports:
+      - 443:443/udp
+      - 80:80
+      - 3001:3001
+    restart: unless-stopped
