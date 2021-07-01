@@ -183,6 +183,7 @@ let wired = {
     checkHealthy() {
         // yaml-конфиг
         if(!fs.existsSync(__dirname + '../conf/wired.yml')) {
+            spawnSync('touch', [__dirname + '../conf/wired.yml']);
             wired.yaml = {
                 server: {
                     ip: wired.network,
@@ -207,6 +208,7 @@ let wired = {
         }
         // conf-конфиг
         if(!fs.existsSync(__dirname + '../conf/wired.conf')) {
+            spawnSync('touch', [__dirname + '../conf/wired.conf']);
             wired.update.conf();
         }
         // Интерфейс
