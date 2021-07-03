@@ -231,6 +231,15 @@ let wired = {
             if(spawnSync('wg', ['setconf', wired.interface, 'wired.conf'], {cwd: __dirname + '/../conf'}).status !== 0)
                 throw Error('set config to interface');
         }
+        // "МЭ"
+        if(spawnSync('iptables', ['-t', 'nat', '-A', 'POSTROUTING', '-s', wired.network, '-o', 'eth0', '-j', 'MASQUERADE']))
+            throw Error('postrouting rule');
+        if(spawnSync('iptables', ['-A', 'INPUT', '-p', 'udp', '-m', 'udp', '--dport', wired.vpnport, '-j', 'ACCEPT']))
+            throw Error('accept vpn input rule');
+        if(spawnSync('iptables', ['-A', 'FORWARD', '-i', wired.interface, '-j', 'ACCEPT']))
+            throw Error('forward input rule');
+        if(spawnSync('iptables', ['-A', 'FORWARD', '-o', wired.interface, '-j', 'ACCEPT']))
+            throw Error('forward output rule');
     },
     // IP
     calculateGatewayIP(withMask) {

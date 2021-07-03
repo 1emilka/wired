@@ -1,4 +1,5 @@
-.idea
+.DS_Store
+.idea/
 server/node_modules
 conf/wired.yml
 conf/wired.conf
