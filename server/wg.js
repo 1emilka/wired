@@ -12,8 +12,8 @@ let wired = {
     host: process.env.WIRED_HOST || 'localhost', // Внешний хост (IP) для подключения
     network: process.env.WIRED_NETWORK || '10.100.0.0/24', // Подсеть
     interface: process.env.WIRED_INTERFACE || 'wired', // Интерфейс
-    vpnport: +process.env.WIRED_VPNPORT || 443, // Порт для VPN
-    webport: +process.env.WIRED_WEBPORT || 80, // Веб-порт
+    vpnport: 443, // Порт для VPN
+    webport: 80, // Веб-порт
     workdir: __dirname, // Рабочая папка
     callback(msg) { // Обработчик запросов от UI
         let jsr = {ok: false};
