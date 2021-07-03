@@ -89,6 +89,7 @@ let wired = {
                         wired.update.yaml();
                         wired.update.conf();
                         wired.update.interface();
+                        jsr.possible_ips = wired.calculateIPs();
                         jsr.ok = true;
                         break;
                     case 'del':
