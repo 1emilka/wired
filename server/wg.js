@@ -232,13 +232,13 @@ let wired = {
                 throw Error('set config to interface');
         }
         // "МЭ"
-        if(spawnSync('iptables', ['-t', 'nat', '-A', 'POSTROUTING', '-s', wired.network, '-o', 'eth0', '-j', 'MASQUERADE']))
+        if(spawnSync('iptables', ['-t', 'nat', '-A', 'POSTROUTING', '-s', wired.network, '-o', 'eth0', '-j', 'MASQUERADE']).status !== 0)
             throw Error('postrouting rule');
-        if(spawnSync('iptables', ['-A', 'INPUT', '-p', 'udp', '-m', 'udp', '--dport', wired.vpnport, '-j', 'ACCEPT']))
+        if(spawnSync('iptables', ['-A', 'INPUT', '-p', 'udp', '-m', 'udp', '--dport', wired.vpnport, '-j', 'ACCEPT']).status !== 0)
             throw Error('accept vpn input rule');
-        if(spawnSync('iptables', ['-A', 'FORWARD', '-i', wired.interface, '-j', 'ACCEPT']))
+        if(spawnSync('iptables', ['-A', 'FORWARD', '-i', wired.interface, '-j', 'ACCEPT']).status !== 0)
             throw Error('forward input rule');
-        if(spawnSync('iptables', ['-A', 'FORWARD', '-o', wired.interface, '-j', 'ACCEPT']))
+        if(spawnSync('iptables', ['-A', 'FORWARD', '-o', wired.interface, '-j', 'ACCEPT']).status !== 0)
             throw Error('forward output rule');
     },
     // IP
