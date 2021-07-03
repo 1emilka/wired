@@ -264,7 +264,7 @@ let wired = {
                 ip = rawIp.join('.');
             } else throw Error('invalid subnet in network')
         } else throw Error('calculate network');
-        return ip + (withMask ? netMask : '');
+        return ip + (withMask ? ('/' + netMask) : '');
     },
     calculateIPs() {
         let networkArray = wired.network.split('/');
