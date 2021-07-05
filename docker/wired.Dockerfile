@@ -9,7 +9,7 @@ ENV WIRED_HOST="${WIRED_HOST}"
 ENV WIRED_NETWORK="${WIRED_NETWORK}"
 ENV WIRED_INTERFACE="${WIRED_INTERFACE}"
 
-RUN apk update && apk upgrade && apk add -U git wireguard-tools nodejs npm iptables
+RUN apk update && apk upgrade && apk add -U git wireguard-tools nodejs npm iptables curl
 RUN mkdir /wired && cd /wired && git clone https://github.com/1emilka/wired . && mkdir conf
 WORKDIR /wired/server
 VOLUME /wired/conf

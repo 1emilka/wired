@@ -345,17 +345,18 @@ try {
             let configStr = '';
             let adminPeerIndex = wired.yaml.peers.findIndex(peer => peer.admin);
             if(adminPeerIndex >= 0) {
-                configStr = '[Interface]\n';
+                configStr = '# config: ' + wired.yaml.peers[adminPeerIndex].name;
+                configStr += '[Interface]\n';
                 configStr += `PrivateKey = ${wired.yaml.peers[adminPeerIndex].keys.private}\n`;
                 configStr += `Address = ${wired.yaml.peers[adminPeerIndex].ip}/32\n`;
                 configStr += 'DNS = 1.1.1.1\n\n';
                 configStr += '[Peer]\n';
-                configStr += `PublicKey = ${wired.yaml.server.publicKey}\n`;
-                configStr += `AllowedIPs = ${wired.yaml.server.network}\n`;
-                configStr += `Endpoint = ${wired.yaml.server.endpoint}\n`;
+                configStr += `PublicKey = ${wired.yaml.server.keys.public}\n`;
+                configStr += `AllowedIPs = ${wired.network}\n`;
+                configStr += `Endpoint = ${wired.host}:${wired.vpnPort}\n`;
                 configStr += 'PersistentKeepalive = 25';
             }
-            res.writeHead(adminPeerIndex >= 0 ? 200 : 404, {'Content-Type':' text/plain'});
+            res.writeHead(adminPeerIndex >= 0 ? 200 : 404, {'Content-Type': 'text/plain'});
             res.end(configStr);
         } else {
             let isAdmin = wired.yaml.peers.reduce((yes, peer) => (yes || (peer.admin && peer.ip === clientIp)), false);
