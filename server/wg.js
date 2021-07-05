@@ -80,6 +80,7 @@ let wired = {
                         let name = json.name || ('user' + privateKey.substr(0, 5));
                         wired.yaml.peers.push({
                             name,
+                            admin: false,
                             keys: {
                                 private: privateKey,
                                 public: publicKey,
@@ -204,10 +205,27 @@ let wired = {
                     keys: {
                         private: '',
                         public: '',
-                    }
+                    },
+                    debug: false,
                 },
                 peers: [],
             };
+            // Создание администратора
+            let privateKey = wired.genkey(),
+                publicKey = wired.pubkey(privateKey),
+                availableIPs = wired.calculateIPs();
+            if(availableIPs.length < 1)
+                throw Error('create admin');
+            let name = 'admin_' + publicKey.substr(0, 5);
+            wired.yaml.peers.push({
+                name,
+                admin: true,
+                keys: {
+                    private: privateKey,
+                    public: publicKey,
+                },
+                ip: availableIPs[0],
+            });
             let serverPrivate = wired.genkey(), serverPublic = wired.pubkey(serverPrivate);
             if((serverPrivate + serverPublic).length === 88) {
                 wired.yaml.server.keys.private = serverPrivate;
@@ -315,7 +333,7 @@ let wired = {
 }
 try {
     wired.checkHealthy();
-    const wss = new WebSocket.Server({host: '0.0.0.0', port: 3001});
+    const wss = new WebSocket.Server({host: wired.calculateGatewayIP(), port: 3001});
     wss.on('connection', wsc => {
         wsc.on('message', msg => {
             wsc.send(JSON.stringify(wired.callback(msg)));
@@ -323,7 +341,7 @@ try {
     });
     http.createServer((req, res) => {
         let clientIp = (req.headers['x-forwarded-for'] || '').split(',')[0] || req.socket.remoteAddress;
-        let isAdmin = wired.yaml.peers.length < 1 || wired.yaml.peers.reduce((yes, peer) => (yes || (peer.admin && peer.ip === clientIp)), false);
+        let isAdmin = wired.yaml.peers.reduce((yes, peer) => (yes || (peer.admin && peer.ip === clientIp)), false);
         let fp = req.url.split('/').splice(1).join('/');
         fp = fp.length === 0  || fp.indexOf('..') !== -1 ? 'index.html' : fp;
         let contentType = ({
@@ -336,11 +354,11 @@ try {
         })[path.extname(fp)];
         fp = __dirname + '/../web/' + fp;
         fs.readFile(fp, (e, c) => {
-            console.log({clientIp, isAdmin, fp, httpCode: (e || !isAdmin) ? 404 : 200});
+            if(wired.yaml.server.debug) console.log({clientIp, isAdmin, fp, httpCode: (e || !isAdmin) ? 404 : 200});
             res.writeHead((e || !isAdmin) ? 404 : 200, {'Content-Type': (e || !isAdmin) ? 'text/plain' : contentType});
             res.end((e || !isAdmin) ? 'error' : c, 'utf-8');
         });
-    }).listen(wired.webPort, '0.0.0.0');
+    }).listen(wired.webPort, wired.calculateGatewayIP());
 } catch (e) {
     console.log('wired error');
     console.error(e);
