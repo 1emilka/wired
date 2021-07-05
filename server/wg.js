@@ -9,12 +9,11 @@ const { spawnSync } = require('child_process');
 // Конфигурация
 let wired = {
     yaml: null, // Данные из yaml-конфигурации
-    host: process.env.WIRED_HOST || 'localhost', // Внешний хост (IP) для подключения
+    host: process.env.WIRED_HOST || 'localhost', // Внешний хост (или IP) для подключения к VPN
     network: process.env.WIRED_NETWORK || '10.100.0.0/24', // Подсеть
     interface: process.env.WIRED_INTERFACE || 'wired', // Интерфейс
-    vpnport: 443, // Порт для VPN
-    webport: 80, // Веб-порт
-    workdir: __dirname, // Рабочая папка
+    vpnPort: 443, // Порт для VPN
+    webPort: 80, // Веб-порт
     callback(msg) { // Обработчик запросов от UI
         let jsr = {ok: false};
         if(wired.yaml === null) {
@@ -49,12 +48,13 @@ let wired = {
                         jsr.ok = true;
                         jsr.server = {
                             publicKey: wired.yaml.server.keys.public,
-                            endpoint: wired.host + ':' + wired.vpnport,
+                            endpoint: wired.host + ':' + wired.vpnPort,
                             network: wired.network,
                             possibleIPs: wired.calculateIPs(),
                         };
                         jsr.peers = wired.yaml.peers.map(peer => {
                             let t = {
+                                admin: peer.admin,
                                 name: peer.name,
                                 keys: peer.keys,
                                 ip: peer.ip,
@@ -91,6 +91,17 @@ let wired = {
                         wired.update.interface();
                         jsr.possible_ips = wired.calculateIPs();
                         jsr.ok = true;
+                        break;
+                    case 'admin':
+                        jsr.cmd = 'peers';
+                        jsr.action = 'admin';
+                        if(json.hasOwnProperty('index') && wired.yaml.peers.hasOwnProperty(json.index)) {
+                            wired.yaml.peers[json.index].admin = !!!wired.yaml.peers[json.index].admin;
+                            wired.update.yaml();
+                            wired.update.conf();
+                            wired.update.interface();
+                            jsr.ok = true;
+                        } else jsr.m = 'need peer index';
                         break;
                     case 'del':
                         jsr.cmd = 'peers';
@@ -133,7 +144,7 @@ let wired = {
                 try {
                     let configFile = fs.readFileSync(__dirname + '/../conf/wired.yml', 'utf8');
                     wired.yaml = yaml.load(configFile);
-                    wired.vpnport = wired.yaml.server.port;
+                    wired.vpnPort = wired.yaml.server.port;
                     wired.interface = wired.yaml.server.interface;
                     wired.network = wired.yaml.server.ip;
                 } catch (e) { }
@@ -189,7 +200,7 @@ let wired = {
                 server: {
                     ip: wired.network,
                     interface: wired.interface,
-                    port: wired.vpnport,
+                    port: wired.vpnPort,
                     keys: {
                         private: '',
                         public: '',
@@ -212,6 +223,16 @@ let wired = {
         // conf-конфиг
         wired.update.conf();
         // Интерфейс
+        let firewallRules = _ => {
+            if(spawnSync('iptables', ['-t', 'nat', '-A', 'POSTROUTING', '-s', wired.network, '-o', 'eth0', '-j', 'MASQUERADE']).status !== 0)
+                throw Error('postrouting rule');
+            if(spawnSync('iptables', ['-A', 'INPUT', '-p', 'udp', '-m', 'udp', '--dport', wired.vpnPort, '-j', 'ACCEPT']).status !== 0)
+                throw Error('accept vpn input rule');
+            if(spawnSync('iptables', ['-A', 'FORWARD', '-i', wired.interface, '-j', 'ACCEPT']).status !== 0)
+                throw Error('forward input rule');
+            if(spawnSync('iptables', ['-A', 'FORWARD', '-o', wired.interface, '-j', 'ACCEPT']).status !== 0)
+                throw Error('forward output rule');
+        };
         let checkCmd = spawnSync('ip', ['link', 'show', wired.interface]);
         if(checkCmd.status !== 0) {
             if(spawnSync('ip', ['link', 'add', 'dev', wired.interface, 'type', 'wireguard']).status !== 0)
@@ -222,25 +243,18 @@ let wired = {
                 throw Error('set config to interface');
             if(spawnSync('ip', ['link', 'set', 'up', 'dev', wired.interface]).status !== 0)
                 throw Error('up new interface');
+            firewallRules();
         } else {
             let cmdOutput = checkCmd.stdout.toString();
             if(cmdOutput.indexOf('state DOWN') !== -1) {
                 if(spawnSync('ip', ['link', 'set', 'up', 'dev', wired.interface]).status !== 0)
                     throw Error('up old interface');
                 wired.update.interface();
+                firewallRules();
             }
             if(spawnSync('wg', ['setconf', wired.interface, 'wired.conf'], {cwd: __dirname + '/../conf'}).status !== 0)
                 throw Error('set config to interface');
         }
-        // "МЭ"
-        if(spawnSync('iptables', ['-t', 'nat', '-A', 'POSTROUTING', '-s', wired.network, '-o', 'eth0', '-j', 'MASQUERADE']).status !== 0)
-            throw Error('postrouting rule');
-        if(spawnSync('iptables', ['-A', 'INPUT', '-p', 'udp', '-m', 'udp', '--dport', wired.vpnport, '-j', 'ACCEPT']).status !== 0)
-            throw Error('accept vpn input rule');
-        if(spawnSync('iptables', ['-A', 'FORWARD', '-i', wired.interface, '-j', 'ACCEPT']).status !== 0)
-            throw Error('forward input rule');
-        if(spawnSync('iptables', ['-A', 'FORWARD', '-o', wired.interface, '-j', 'ACCEPT']).status !== 0)
-            throw Error('forward output rule');
     },
     // IP
     calculateGatewayIP(withMask) {
@@ -309,7 +323,7 @@ try {
     });
     http.createServer((req, res) => {
         let clientIp = (req.headers['x-forwarded-for'] || '').split(',')[0] || req.socket.remoteAddress;
-        let isAdmin = true || wired.yaml.peers.length < 1 || wired.yaml.peers.reduce((yes, peer) => (yes || peer.ip === clientIp), false);
+        let isAdmin = wired.yaml.peers.length < 1 || wired.yaml.peers.reduce((yes, peer) => (yes || (peer.admin && peer.ip === clientIp)), false);
         let fp = req.url.split('/').splice(1).join('/');
         fp = fp.length === 0  || fp.indexOf('..') !== -1 ? 'index.html' : fp;
         let contentType = ({
@@ -322,11 +336,11 @@ try {
         })[path.extname(fp)];
         fp = __dirname + '/../web/' + fp;
         fs.readFile(fp, (e, c) => {
-            if(e) console.log(e); // для docker logs
+            if(e) console.log(e); // docker-compose logs wired
             res.writeHead((e || !isAdmin) ? 404 : 200, {'Content-Type': (e || !isAdmin) ? 'text/plain' : contentType});
             res.end((e || !isAdmin) ? 'error' : c, 'utf-8');
         });
-    }).listen(wired.webport, '0.0.0.0');
+    }).listen(wired.webPort, '0.0.0.0');
 } catch (e) {
     console.log('wired error');
     console.error(e);
