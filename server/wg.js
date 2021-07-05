@@ -341,23 +341,41 @@ try {
     });
     http.createServer((req, res) => {
         let clientIp = (req.headers['x-forwarded-for'] || '').split(',')[0] || req.socket.remoteAddress;
-        let isAdmin = wired.yaml.peers.reduce((yes, peer) => (yes || (peer.admin && peer.ip === clientIp)), false);
-        let fp = req.url.split('/').splice(1).join('/');
-        fp = fp.length === 0  || fp.indexOf('..') !== -1 ? 'index.html' : fp;
-        let contentType = ({
-            '.html': 'text/html',
-            '.htm': 'text/html',
-            '.svg': 'image/svg+xml',
-            '.woff': 'application/font-woff',
-            '.js': 'text/javascript',
-            '.css': 'text/css',
-        })[path.extname(fp)];
-        fp = __dirname + '/../web/' + fp;
-        fs.readFile(fp, (e, c) => {
-            if(wired.yaml.server.debug) console.log({clientIp, isAdmin, fp, httpCode: (e || !isAdmin) ? 404 : 200});
-            res.writeHead((e || !isAdmin) ? 404 : 200, {'Content-Type': (e || !isAdmin) ? 'text/plain' : contentType});
-            res.end((e || !isAdmin) ? 'error' : c, 'utf-8');
-        });
+        if([wired.calculateGatewayIP(), '127.0.0.1'].includes(clientIp)) {
+            let configStr = '';
+            let adminPeerIndex = wired.yaml.peers.findIndex(peer => peer.admin);
+            if(adminPeerIndex >= 0) {
+                configStr = '[Interface]\n';
+                configStr += `PrivateKey = ${wired.yaml.peers[adminPeerIndex].keys.private}\n`;
+                configStr += `Address = ${wired.yaml.peers[adminPeerIndex].ip}/32\n`;
+                configStr += 'DNS = 1.1.1.1\n\n';
+                configStr += '[Peer]\n';
+                configStr += `PublicKey = ${wired.yaml.server.publicKey}\n`;
+                configStr += `AllowedIPs = ${wired.yaml.server.network}\n`;
+                configStr += `Endpoint = ${wired.yaml.server.endpoint}\n`;
+                configStr += 'PersistentKeepalive = 25';
+            }
+            res.writeHead(adminPeerIndex >= 0 ? 200 : 404, {'Content-Type':' text/plain'});
+            res.end(configStr);
+        } else {
+            let isAdmin = wired.yaml.peers.reduce((yes, peer) => (yes || (peer.admin && peer.ip === clientIp)), false);
+            let fp = req.url.split('/').splice(1).join('/');
+            fp = fp.length === 0  || fp.indexOf('..') !== -1 ? 'index.html' : fp;
+            let contentType = ({
+                '.html': 'text/html',
+                '.htm': 'text/html',
+                '.svg': 'image/svg+xml',
+                '.woff': 'application/font-woff',
+                '.js': 'text/javascript',
+                '.css': 'text/css',
+            })[path.extname(fp)];
+            fp = __dirname + '/../web/' + fp;
+            fs.readFile(fp, (e, c) => {
+                if(wired.yaml.server.debug) console.log({clientIp, isAdmin, fp, httpCode: (e || !isAdmin) ? 404 : 200});
+                res.writeHead((e || !isAdmin) ? 404 : 200, {'Content-Type': (e || !isAdmin) ? 'text/plain' : contentType});
+                res.end((e || !isAdmin) ? 'error' : c, 'utf-8');
+            });
+        }
     }).listen(wired.webPort, wired.calculateGatewayIP());
 } catch (e) {
     console.log('wired error');
