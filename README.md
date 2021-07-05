@@ -16,6 +16,7 @@ docker exec wired curl -s http://10.100.0.1
 ## Обновление
 ```shell
 docker exec wired git pull origin
+docker commit wired
 ```
 ## Возможные аргументы (переменные среды) контейнера
 Наименование | Описание | По умолчанию

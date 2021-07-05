@@ -15,6 +15,4 @@ WORKDIR /wired/server
 VOLUME /wired/conf
 RUN npm i -g nodemon && npm i
 EXPOSE 443/udp
-EXPOSE 80
-EXPOSE 3001
 CMD npm run start
