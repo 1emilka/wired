@@ -9,7 +9,7 @@ services:
       - NET_ADMIN
       - SYS_MODULE
     environment:
-      - WIRED_HOST=<ВАШЕ_ИМЯ_ХОСТА>
+      - WIRED_HOST=<WIRED_PSEUDOHOST>
     volumes:
       - wired_conf:/wired/conf
     ports:

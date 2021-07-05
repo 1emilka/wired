@@ -345,7 +345,7 @@ try {
             let configStr = '';
             let adminPeerIndex = wired.yaml.peers.findIndex(peer => peer.admin);
             if(adminPeerIndex >= 0) {
-                configStr = '# config: ' + wired.yaml.peers[adminPeerIndex].name;
+                configStr = `# config: ${wired.yaml.peers[adminPeerIndex].name}\n`;
                 configStr += '[Interface]\n';
                 configStr += `PrivateKey = ${wired.yaml.peers[adminPeerIndex].keys.private}\n`;
                 configStr += `Address = ${wired.yaml.peers[adminPeerIndex].ip}/32\n`;
