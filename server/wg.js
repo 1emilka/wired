@@ -10,9 +10,9 @@ const { spawnSync } = require('child_process');
 let wired = {
     yaml: null, // Данные из yaml-конфигурации
     host: process.env.WIRED_HOST || 'localhost', // Внешний хост (или IP) для подключения к VPN
-    network: process.env.WIRED_NETWORK || '10.100.0.0/24', // Подсеть
+    network: process.env.WIRED_NETWORK || '10.0.0.0/24', // Подсеть
     interface: process.env.WIRED_INTERFACE || 'wired', // Интерфейс
-    vpnPort: 443, // Порт для VPN
+    vpnPort: process.env.WIRED_VPNPORT || 443, // Порт для VPN
     webPort: 80, // Веб-порт
     callback(msg) { // Обработчик запросов от UI
         let jsr = {ok: false};
@@ -50,6 +50,7 @@ let wired = {
                             publicKey: wired.yaml.server.keys.public,
                             endpoint: wired.host + ':' + wired.vpnPort,
                             network: wired.network,
+                            gateway: wired.calculateGatewayIP(),
                             possibleIPs: wired.calculateIPs(),
                         };
                         jsr.peers = wired.yaml.peers.map(peer => {
@@ -349,7 +350,7 @@ try {
                 configStr += '[Interface]\n';
                 configStr += `PrivateKey = ${wired.yaml.peers[adminPeerIndex].keys.private}\n`;
                 configStr += `Address = ${wired.yaml.peers[adminPeerIndex].ip}/32\n`;
-                configStr += 'DNS = 1.1.1.1\n\n';
+                configStr += 'DNS = ' + wired.calculateGatewayIP() + '\n\n';
                 configStr += '[Peer]\n';
                 configStr += `PublicKey = ${wired.yaml.server.keys.public}\n`;
                 configStr += `AllowedIPs = ${wired.network}\n`;

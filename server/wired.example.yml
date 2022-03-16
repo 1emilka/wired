@@ -1,5 +1,5 @@
 server:
-  ip: 10.100.0.0/24
+  ip: 10.0.0.0/24
   interface: wired
   port: 443
   keys:
@@ -13,11 +13,11 @@ peers:
     keys:
       public: U2xutA+lC826TP+GAfw+5TF5bwwxtj9bky5wMblKoj8=
       private: yKY7bGNNo6PqNheMn/KLz2pagReqOPpLYx8oI8CfeVA=
-    ip: 10.100.0.2
+    ip: 10.0.0.2
   -
     name: Peer 2
     admin: false
     keys:
       public: 48tsthq8QTnKxgtKm64iQtgcpPwt7KSUwGhe+y+1+FU=
       private: 2J/PXK9SHkeswFNEV9dwIE/q5taVZzBsf+2fHVTYRE8=
-    ip: 10.100.0.3
+    ip: 10.0.0.3

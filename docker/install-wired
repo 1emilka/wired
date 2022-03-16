@@ -1,0 +1,13 @@
+#!/bin/bash
+WIRED_HOST=$(uname -n)
+WIRED_NETWORK=10.0.0.0/24
+WIRED_VPNPORT=443
+WIRED_INTERFACE=wired
+wget https://github.com/1emilka/wired/raw/master/docker/docker-compose.yml
+wget https://github.com/1emilka/wired/raw/master/docker/named.conf
+wget https://github.com/1emilka/wired/raw/master/docker/wired.Dockerfile
+sed -i -e "s|<WIRED_HOST>|$WIRED_HOST|g" docker-compose.yml
+sed -i -e "s|<WIRED_NETWORK>|$WIRED_NETWORK|g" docker-compose.yml
+sed -i -e "s|<WIRED_VPNPORT>|$WIRED_VPNPORT|g" docker-compose.yml
+sed -i -e "s|<WIRED_INTERFACE>|$WIRED_INTERFACE|g" docker-compose.yml
+docker-compose up -d && rm wired.Dockerfile named.conf

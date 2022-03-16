@@ -9,11 +9,14 @@ services:
       - NET_ADMIN
       - SYS_MODULE
     environment:
-      - WIRED_HOST=<WIRED_PSEUDOHOST>
+      - WIRED_HOST=<WIRED_HOST>
+      - WIRED_NETWORK=<WIRED_NETWORK>
+      - WIRED_VPNPORT=<WIRED_VPNPORT>
+      - WIRED_INTERFACE=<WIRED_INTERFACE>
     volumes:
       - wired_conf:/wired/conf
     ports:
-      - 443:443/udp
+      - <WIRED_VPNPORT>:<WIRED_VPNPORT>/udp
     sysctls:
       - net.ipv4.ip_forward=1
       - net.ipv4.conf.all.src_valid_mark=1
