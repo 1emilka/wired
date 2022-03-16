@@ -297,14 +297,20 @@ export default {
                         </div>
                     </div>
                     <div class="small text-muted lh-1">
-                        <span class="ms-1">{{ peer.ip }}</span>
-                        <span class="ms-1" v-if="peer.foreignpair">({{ peer.foreignpair }})</span>
-                        <span class="ms-1" v-if="peer.tx">
-                            <FontAwesomeIcon icon="chevron-down"/>
+                        <span class="me-1">{{ peer.ip }}</span>
+                        <span class="me-1" v-if="peer.foreignpair">({{ peer.foreignpair }})</span>
+                        <span class="me-1" v-if="peer.tx">
+                            <FontAwesomeIcon
+                                icon="chevron-down"
+                                class="me-1"
+                            />
                             <span>{{ shortBytes(peer.tx) }}</span>
                         </span>
                         <span v-if="peer.rx">
-                            <FontAwesomeIcon icon="chevron-up"/>
+                            <FontAwesomeIcon
+                                icon="chevron-up"
+                                class="me-1"
+                            />
                             <span>{{ shortBytes(peer.rx) }}</span>
                         </span>
                     </div>
