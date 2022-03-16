@@ -125,9 +125,13 @@ export default {
         },
         reloadConfig() {
             this.wsSend({
-                cmd: 'reload',
-                action: 'interface',
+                cmd: 'peers',
+                action: 'all',
             });
+            // this.wsSend({
+            //     cmd: 'reload',
+            //     action: 'interface',
+            // });
         },
         wsSend(obj) {
             let ok = false;
@@ -196,12 +200,6 @@ export default {
             cmd: 'peers',
             action: 'all',
         });
-        setInterval(_ => {
-            this.wsSend({
-                cmd: 'peers',
-                action: 'all',
-            });
-        }, 1500);
     }
 }
 </script>
@@ -211,8 +209,11 @@ export default {
             <div class="col-12">
                 <div class="d-flex align-items-center">
                     <h1 class="flex-fill mb-0">wired</h1>
-                    <button type="button" class="btn btn-primary text-black-50" @click.prevent="preNewPeer">
+                    <button type="button" class="btn btn-primary" @click.prevent="preNewPeer">
                         <FontAwesomeIcon icon="user-plus"/>
+                    </button>
+                    <button type="button" class="btn btn-light text-black-50" @click.prevent="reloadConfig">
+                        <FontAwesomeIcon icon="arrows-rotate"/>
                     </button>
                 </div>
             </div>
