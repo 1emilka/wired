@@ -201,7 +201,7 @@ export default {
                 cmd: 'peers',
                 action: 'all',
             });
-        }, 1000);
+        }, 1500);
     }
 }
 </script>
@@ -225,8 +225,8 @@ export default {
                 <div class="col-12" v-for="(peer, peerIndex) in peers">
                     <div class="d-flex align-items-center">
                         <h3 class="flex-fill mb-0">{{ peer.name }}</h3>
-                        <div class="col-auto row g-2 d-none d-md-block">
-                            <button type="button" class="btn btn-outline-light me-2" disabled>
+                        <div class="col-auto btn-group d-none d-md-block">
+                            <button type="button" class="btn btn-outline-light" disabled>
                                 <span class="text-black-50 lh-1 me-1">{{ peer.online ? 'Онлайн' : 'Не в сети' }}</span>
                                 <FontAwesomeIcon
                                     :icon="peer.online ? 'face-smile' : 'face-frown'"
@@ -241,7 +241,6 @@ export default {
                             >
                                 <FontAwesomeIcon
                                     :icon="peer.admin ? 'unlock' : 'lock'"
-                                    class="text-dark"
                                 />
                             </button>
                             <button type="button"
@@ -250,7 +249,6 @@ export default {
                                     title="Скачать конфигурацию wired.conf">
                                 <FontAwesomeIcon
                                     icon="download"
-                                    class="text-dark"
                                 />
                             </button>
                             <button type="button"
@@ -259,11 +257,10 @@ export default {
                                     title="QR-код конфигурации для смартфона">
                                 <FontAwesomeIcon
                                     icon="qrcode"
-                                    class="text-dark"
                                 />
                             </button>
                             <button type="button"
-                                    class="btn btn-light text-black-50"
+                                    class="btn btn-light"
                                     @click.prevent="preDelPeer(peerIndex)" title="Удалить пира">
                                 <FontAwesomeIcon
                                     icon="times"
@@ -275,7 +272,7 @@ export default {
                             <div class="dropdown">
                                 <button type="button" class="btn btn-light text-black-50 w-100" data-bs-toggle="dropdown" title="Действия с пользователем">
                                     <FontAwesomeIcon
-                                        icon="download"
+                                        icon="bars"
                                     />
                                 </button>
                                 <div class="dropdown-menu">
@@ -336,7 +333,7 @@ export default {
                                 </form>
                             </div>
                             <div class="modal-footer border-top-0">
-                                <button type="button" class="btn btn-primary w-100" @click.prevent="newPeer">Добавить</button>
+                                <button type="button" class="btn btn-lg w-100 btn-primary" @click.prevent="newPeer">Добавить</button>
                                 <button type="button" class="btn btn-lg w-100 btn-light" data-bs-dismiss="modal">Закрыть</button>
                             </div>
                         </div>
@@ -349,7 +346,7 @@ export default {
                                 <p>Подтвердите удаление нажатием на кнопку «Удалить» ниже</p>
                             </div>
                             <div class="modal-footer border-top-0">
-                                <button type="button" class="btn btn-danger w-100" @click.prevent="delPeer">Удалить</button>
+                                <button type="button" class="btn btn-lg w-100 btn-danger" @click.prevent="delPeer">Удалить</button>
                                 <button type="button" class="btn btn-lg w-100 btn-light" data-bs-dismiss="modal">Закрыть</button>
                             </div>
                         </div>
@@ -357,13 +354,12 @@ export default {
                 </div>
                 <div class="modal fade" id="qrpeer_modal">
                     <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">QR-код конфигурации</h5>
-                                <button class="btn-close" data-bs-dismiss="modal"></button>
-                            </div>
+                        <div class="modal-content rounded-6 shadow border-0 py-2">
                             <div class="modal-body">
                                 <img :src="qrUrl" class="img-fluid" alt="QR-код конфигурации">
+                            </div>
+                            <div class="modal-footer border-top-0">
+                                <button type="button" class="btn btn-lg w-100 btn-light" data-bs-dismiss="modal">Закрыть</button>
                             </div>
                         </div>
                     </div>
@@ -373,5 +369,5 @@ export default {
     </div>
 </template>
 <style lang="scss">
-    @import "scss/main";
+    @import "assets/main";
 </style>

@@ -1,7 +1,7 @@
 
 @font-face {
   font-family: "Circe";
-  src: url('../assets/fonts/circe-light.woff') format("woff");
+  src: url('./circe-light.woff') format("woff");
   font-weight: $font-weight-light;
   font-style: normal;
   font-display: swap
@@ -9,7 +9,7 @@
 
 @font-face {
   font-family: "Circe";
-  src: url('../assets/fonts/circe.woff') format("woff");
+  src: url('./circe.woff') format("woff");
   font-weight: $font-weight-normal;
   font-style: normal;
   font-display: swap
@@ -17,7 +17,7 @@
 
 @font-face {
   font-family: "Circe";
-  src: url('../assets/fonts/circe-bold.woff') format("woff");
+  src: url('./circe-bold.woff') format("woff");
   font-weight: $font-weight-bold;
   font-style: normal;
   font-display: swap
