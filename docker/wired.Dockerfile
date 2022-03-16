@@ -6,10 +6,10 @@ ARG WIRED_NETWORK=10.0.0.0/24
 ARG WIRED_INTERFACE=wired
 ARG WIRED_VPNPORT=443
 
-ENV WIRED_HOST="${WIRED_HOST}"
-ENV WIRED_NETWORK="${WIRED_NETWORK}"
-ENV WIRED_INTERFACE="${WIRED_INTERFACE}"
-ENV WIRED_VPNPORT="${WIRED_VPNPORT}"
+ENV WIRED_HOST=${WIRED_HOST}
+ENV WIRED_NETWORK=${WIRED_NETWORK}
+ENV WIRED_INTERFACE=${WIRED_INTERFACE}
+ENV WIRED_VPNPORT=${WIRED_VPNPORT}
 
 RUN apk update && apk upgrade && apk add --no-cache -U git wireguard-tools nodejs npm iptables curl bind
 RUN mkdir /wired && cd /wired && git clone https://github.com/1emilka/wired . && mkdir conf

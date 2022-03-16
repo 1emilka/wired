@@ -4,15 +4,15 @@ services:
     build:
       context: .
       dockerfile: wired.Dockerfile
+      args:
+        - WIRED_HOST=<WIRED_HOST>
+        - WIRED_NETWORK=<WIRED_NETWORK>
+        - WIRED_VPNPORT=<WIRED_VPNPORT>
+        - WIRED_INTERFACE=<WIRED_INTERFACE>
     container_name: wired
     cap_add:
       - NET_ADMIN
       - SYS_MODULE
-    environment:
-      - WIRED_HOST=<WIRED_HOST>
-      - WIRED_NETWORK=<WIRED_NETWORK>
-      - WIRED_VPNPORT=<WIRED_VPNPORT>
-      - WIRED_INTERFACE=<WIRED_INTERFACE>
     volumes:
       - wired_conf:/wired/conf
     ports:

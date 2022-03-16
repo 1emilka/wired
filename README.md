@@ -2,7 +2,8 @@
 Веб-интерфейс для управления Wireguard
 ## Быстрая установка
 ```shell
-curl -s https://github.com/1emilka/wired/raw/master/docker/install-wired | sh
+# Важно! Приватная сеть, порт по умолчанию указаны ниже в разделе «Аргументы сборки образа»
+curl -sL https://github.com/1emilka/wired/raw/master/docker/install-wired | sh
 docker exec wired curl -s http://10.0.0.1
 ```
 ## Обновление
@@ -10,7 +11,7 @@ docker exec wired curl -s http://10.0.0.1
 docker exec wired git pull origin
 docker commit wired
 ```
-## Возможные аргументы (переменные среды) контейнера
+## Аргументы сборки образа
 |  Наименование   |           Описание           |      По умолчанию       |
 |:---------------:|:----------------------------:|:-----------------------:|
 |   WIRED_HOST    |  Хост для подключения к VPN  | $(uname -n) / localhost |
